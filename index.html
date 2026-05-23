@@ -1,0 +1,2173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Terranova — Journeys Remembered</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet" />
+<style>
+/* ============================================
+   TERRANOVA — Storytelling Travel Landing Page
+   ============================================ */
+
+/* ---------- Tokens ---------- */
+:root {
+  --color-obsidian: #0A0A0B;
+  --color-void: #111113;
+  --color-ember: #C9622F;
+  --color-gold: #E8B96A;
+  --color-dusk: #7B5E4A;
+  --color-fog: #B8ADA5;
+  --color-bone: #EDE8E3;
+  --color-white-10: rgba(255, 255, 255, 0.10);
+  --color-white-05: rgba(255, 255, 255, 0.05);
+  --color-ember-glow: rgba(201, 98, 47, 0.15);
+
+  --type-hero: clamp(80px, 8vw, 128px);
+  --type-display: clamp(52px, 5vw, 80px);
+  --type-subhead: clamp(28px, 2.5vw, 42px);
+
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 48px;
+  --space-xl: 80px;
+  --space-2xl: 128px;
+  --space-3xl: 200px;
+
+  --shadow-card: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-glow: 0 0 60px rgba(201, 98, 47, 0.25);
+  --shadow-deep: 0 40px 100px rgba(0, 0, 0, 0.8);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-body: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-accent: "Bebas Neue", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  background: var(--color-obsidian);
+  color: var(--color-bone);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: none;
+}
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: none; border: none; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; cursor: none; }
+input, textarea { font-family: inherit; cursor: none; }
+::selection { background: var(--color-ember); color: var(--color-bone); }
+
+/* ---------- Grain overlay (fixed) ---------- */
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  opacity: 0.04; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* ---------- Custom cursor ---------- */
+.cursor-dot, .cursor-ring {
+  position: fixed; top: 0; left: 0; pointer-events: none;
+  z-index: 9999; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+}
+.cursor-dot {
+  width: 6px; height: 6px; background: var(--color-ember);
+  opacity: 0.9; transition: opacity 0.2s, transform 0.05s linear;
+  z-index: 10000;
+}
+.cursor-ring {
+  width: 22px; height: 22px;
+  border: 1px solid var(--color-ember);
+  opacity: 0.35;
+  transition: width 0.25s var(--ease-out-expo), height 0.25s var(--ease-out-expo), opacity 0.25s, border-color 0.25s;
+  display: flex; align-items: center; justify-content: center;
+}
+.cursor-ring .cursor-label {
+  font-family: var(--font-accent);
+  font-size: 8px; letter-spacing: 0.2em;
+  color: var(--color-bone);
+  opacity: 0; transition: opacity 0.2s;
+}
+body.cursor-hover .cursor-dot { opacity: 0; }
+body.cursor-hover .cursor-ring {
+  width: 56px; height: 56px;
+  border-color: var(--color-ember);
+  opacity: 0.9;
+  mix-blend-mode: normal;
+  background: rgba(201, 98, 47, 0.08);
+}
+body.cursor-hover .cursor-ring .cursor-label { opacity: 1; }
+body.cursor-video .cursor-ring { width: 56px; height: 56px; opacity: 1; mix-blend-mode: normal; }
+body.cursor-video .cursor-ring .cursor-label { opacity: 1; }
+@media (hover: none) { .cursor-dot, .cursor-ring { display: none; } body, button, a, input { cursor: auto !important; } }
+
+/* ---------- Scroll progress bar ---------- */
+.scroll-bar {
+  position: fixed; bottom: 0; left: 0; height: 2px; width: 0%;
+  background: linear-gradient(90deg, var(--color-ember), var(--color-gold));
+  z-index: 999; transition: width 0.05s linear;
+}
+
+/* ---------- Top Navigation ---------- */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; height: 72px;
+  display: flex; align-items: center; padding: 0 40px;
+  z-index: 1000;
+  transition: background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+}
+.nav.scrolled {
+  background: rgba(10, 10, 11, 0.72);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.nav-left { display: flex; align-items: center; gap: 16px; flex: 1; }
+.nav-brand {
+  font-family: var(--font-body); font-weight: 500;
+  font-size: 14px; letter-spacing: 0.3em; color: var(--color-bone);
+  transition: transform 0.4s ease;
+}
+.nav.scrolled .nav-brand { transform: scale(0.95); transform-origin: left center; }
+.nav-rule { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); }
+.nav-tagline {
+  font-size: 12px; font-weight: 300; color: var(--color-fog);
+  letter-spacing: 0.02em;
+}
+.nav-center { display: flex; gap: 36px; flex: 0; }
+.nav-link {
+  position: relative; font-size: 13px; font-weight: 400;
+  letter-spacing: 0.08em; color: var(--color-fog);
+  transition: color 0.25s ease;
+  padding: 6px 0;
+}
+.nav-link::after {
+  content: ""; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1px; background: var(--color-ember);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.nav-link:hover { color: var(--color-bone); }
+.nav-link:hover::after { transform: scaleX(1); }
+.nav-link.active { color: var(--color-ember); }
+.nav-link.active::after { transform: scaleX(1); }
+.nav-right { display: flex; justify-content: flex-end; flex: 1; }
+.nav.scrolled .nav-link { color: var(--color-bone); }
+
+/* ---------- Buttons / pills ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 32px; border-radius: 6px;
+  font-family: var(--font-body); font-weight: 500;
+  font-size: 13px; letter-spacing: 0.08em;
+  transition: all 0.25s ease;
+}
+.btn-sm { padding: 10px 22px; font-size: 12px; }
+.btn-hero { padding: 20px 56px; font-size: 16px; }
+.btn-primary { background: var(--color-ember); color: var(--color-bone); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+.btn-secondary {
+  background: transparent; color: var(--color-bone);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+.btn-secondary:hover { border-color: var(--color-gold); color: var(--color-gold); }
+.btn-ghost {
+  background: transparent; color: var(--color-ember);
+  border: 1px solid var(--color-ember);
+}
+.btn-ghost:hover { background: var(--color-ember); color: var(--color-bone); box-shadow: var(--shadow-glow); }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 100px;
+  font-weight: 500; font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.pill-accent { background: var(--color-ember-glow); color: var(--color-ember); border: 1px solid rgba(201, 98, 47, 0.3); }
+.pill-ghost { background: transparent; color: var(--color-fog); border: 1px solid rgba(255, 255, 255, 0.2); }
+.pill-solid { background: var(--color-ember); color: var(--color-bone); }
+
+/* ---------- Glass ---------- */
+.glass-panel {
+  background: rgba(15, 13, 11, 0.72);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.glass-light {
+  background: rgba(232, 185, 106, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(232, 185, 106, 0.15);
+}
+
+/* ---------- Side rails ---------- */
+.social-dock {
+  position: fixed; left: 24px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 20px; align-items: center;
+  z-index: 50;
+}
+.social-dock a {
+  width: 18px; height: 18px;
+  color: var(--color-fog); opacity: 0.5;
+  transition: all 0.25s ease;
+  display: flex; align-items: center; justify-content: center;
+}
+.social-dock a:hover { opacity: 1; color: var(--color-gold); transform: scale(1.15); }
+.social-dock .dock-line {
+  width: 1px; height: 60px;
+  background: rgba(255, 255, 255, 0.15);
+  margin-top: 8px;
+}
+.progress-rail {
+  position: fixed; right: 32px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 20px; align-items: flex-end;
+  z-index: 50;
+}
+.progress-dot {
+  position: relative; width: 4px; height: 4px;
+  background: rgba(255, 255, 255, 0.25); border-radius: 100px;
+  transition: all 0.35s var(--ease-out-expo);
+}
+.progress-dot.active {
+  width: 4px; height: 24px;
+  background: var(--color-ember);
+}
+.progress-dot .dot-label {
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  white-space: nowrap;
+  padding: 6px 12px; border-radius: 6px;
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--color-bone);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.progress-dot:hover .dot-label { opacity: 1; transform: translateY(-50%) translateX(-4px); }
+
+/* ====================================================
+   SECTION A — HERO
+   ==================================================== */
+.hero {
+  position: relative; height: 100vh; min-height: 720px;
+  overflow: hidden;
+  background: var(--color-obsidian);
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+}
+.hero-slide {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-in-out);
+  transform: scale(1.0);
+}
+.hero-slide.active { opacity: 1; }
+.hero-slide.entering { animation: kenburns 14s linear forwards; }
+@keyframes kenburns {
+  from { transform: scale(1.05); }
+  to { transform: scale(1.14); }
+}
+.hero-gradient {
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    linear-gradient(to right, rgba(10,10,11,0.85) 0%, rgba(10,10,11,0.4) 50%, rgba(10,10,11,0.1) 100%),
+    linear-gradient(to top, rgba(10,10,11,1.0) 0%, transparent 30%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  height: 100%;
+}
+.hero-left {
+  position: absolute; left: 8vw; top: 50%; transform: translateY(-50%);
+  max-width: 560px;
+}
+.hero-region {
+  display: flex; align-items: center; gap: 16px;
+  font-family: var(--font-accent); font-size: 11px;
+  letter-spacing: 0.3em; color: var(--color-ember);
+  margin-bottom: 24px;
+  opacity: 0;
+}
+.hero-region::before {
+  content: ""; display: block; width: 32px; height: 1px;
+  background: var(--color-ember);
+}
+.hero-title {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: var(--type-hero); color: var(--color-bone);
+  line-height: 0.95;
+  margin-bottom: 32px;
+}
+.hero-title .line { display: block; overflow: hidden; }
+.hero-title .line-inner { display: inline-block; opacity: 0; transform: translateY(40px); }
+.hero-title .line-1 .line-inner { transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo); }
+.hero-title .line-2 { font-weight: 600; letter-spacing: -0.02em; }
+.hero-title .line-2 .line-inner { transition: opacity 1s var(--ease-out-expo), transform 1s var(--ease-out-expo); }
+.hero-title .line-3 .line-inner { transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo); font-style: italic; font-weight: 300; }
+.hero-about {
+  font-size: 18px; font-weight: 300; color: var(--color-fog);
+  line-height: 1.8; max-width: 440px;
+  margin-bottom: 40px;
+  opacity: 0; transition: opacity 0.8s ease 2s;
+}
+.hero-ctas {
+  display: flex; gap: 16px; opacity: 0;
+  transition: opacity 0.8s ease 2.6s;
+}
+
+/* Hero entry triggered */
+.hero.loaded .hero-region { opacity: 1; transition: opacity 0.8s ease 1.2s; transform: translateY(0); }
+.hero.loaded .hero-title .line-1 .line-inner { opacity: 1; transform: translateY(0); transition-delay: 1.6s; }
+.hero.loaded .hero-title .line-2 .line-inner { opacity: 1; transform: translateY(0); transition-delay: 2.0s; }
+.hero.loaded .hero-title .line-3 .line-inner { opacity: 1; transform: translateY(0); transition-delay: 2.4s; }
+.hero.loaded .hero-about { opacity: 1; }
+.hero.loaded .hero-ctas { opacity: 1; }
+
+/* Right rail — destination switcher */
+.hero-switcher {
+  position: absolute; right: 3vw; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 4px;
+  opacity: 0; transition: opacity 0.8s ease 3.2s;
+}
+.hero.loaded .hero-switcher { opacity: 1; }
+.switcher-item {
+  position: relative;
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 0 18px 18px;
+  font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--color-fog);
+  cursor: none;
+  transition: color 0.3s ease;
+  border-right: 2px solid transparent;
+}
+.switcher-item::before {
+  content: ""; position: absolute; right: -2px; top: 50%;
+  width: 2px; height: 20%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-50%);
+  transition: height 0.4s var(--ease-out-expo), background 0.4s ease;
+}
+.switcher-item.active { color: var(--color-bone); font-weight: 500; }
+.switcher-item.active::before { height: 100%; background: var(--color-ember); }
+.switcher-item:hover { color: var(--color-bone); }
+.switcher-num {
+  font-family: var(--font-accent); font-size: 11px;
+  color: var(--color-ember); letter-spacing: 0.2em;
+}
+
+/* Bottom location strip */
+.hero-strip {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 72px; z-index: 3;
+  display: flex; align-items: stretch;
+  opacity: 0; transition: opacity 0.8s ease 3.2s;
+}
+.hero.loaded .hero-strip { opacity: 1; }
+.strip-item {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 13px; color: var(--color-fog);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  transition: background 0.3s ease, color 0.3s ease;
+  cursor: none;
+}
+.strip-item:last-child { border-right: none; }
+.strip-item .pin { color: var(--color-ember); width: 14px; height: 14px; }
+.strip-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--color-bone); }
+.strip-item.active { color: var(--color-bone); }
+.strip-item.active::after {
+  content: ""; position: absolute; bottom: 0; left: 25%; right: 25%; height: 2px;
+  background: var(--color-ember);
+}
+
+/* Photo film strip */
+.hero-photos {
+  position: absolute; bottom: 96px; right: 4vw; z-index: 3;
+  opacity: 0; transition: opacity 0.8s ease 3.2s;
+}
+.hero.loaded .hero-photos { opacity: 1; }
+.hero-photos-label {
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 500; font-size: 13px; color: var(--color-fog);
+  margin-bottom: 12px;
+}
+.hero-photos-label::after {
+  content: ""; flex: 1; height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+  min-width: 32px;
+}
+.hero-photos-strip {
+  display: flex; gap: 8px;
+}
+.hero-photos-strip .thumb {
+  width: 90px; height: 60px; border-radius: 6px;
+  background-size: cover; background-position: center;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  cursor: none;
+  filter: brightness(0.85);
+}
+.hero-photos-strip .thumb:hover { transform: scale(1.08); filter: brightness(1.1); }
+.hero-photos-strip .thumb.active { border-color: var(--color-ember); transform: scale(1.05); filter: brightness(1); }
+
+/* ====================================================
+   SECTION B — NARRATIVE
+   ==================================================== */
+.narrative {
+  position: relative;
+  background: var(--color-obsidian);
+  padding: var(--space-3xl) 0;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.narrative::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle at center, var(--color-ember-glow) 0%, transparent 60%);
+  pointer-events: none;
+}
+.narrative-line {
+  position: absolute; top: 0; left: 50%;
+  width: 1px; height: 200px;
+  background: linear-gradient(to bottom, transparent, var(--color-ember));
+}
+.narrative-line::after {
+  content: ""; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--color-ember);
+  box-shadow: 0 0 12px var(--color-ember);
+}
+.narrative-content {
+  max-width: 860px; margin: 0 auto;
+  text-align: center; position: relative; z-index: 1;
+  padding: 0 40px;
+}
+.narrative-quote {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(40px, 5vw, 64px);
+  color: var(--color-bone);
+  line-height: 1.15;
+  margin-bottom: 48px;
+}
+.narrative-quote .word {
+  display: inline-block;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  margin-right: 0.25em;
+}
+.narrative.in-view .narrative-quote .word { opacity: 1; transform: translateY(0); }
+.narrative-rule {
+  width: 60px; height: 1px; background: var(--color-ember);
+  margin: 0 auto 32px;
+}
+.narrative-body {
+  font-size: 20px; font-weight: 300; color: var(--color-fog);
+  line-height: 1.7;
+  max-width: 640px; margin: 0 auto;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.8s ease 1s, transform 0.8s ease 1s;
+}
+.narrative.in-view .narrative-body { opacity: 1; transform: translateY(0); }
+.narrative-continue {
+  position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  opacity: 0.5;
+}
+.narrative-continue .label {
+  font-family: var(--font-accent); font-size: 10px;
+  letter-spacing: 0.3em; color: var(--color-fog);
+}
+.narrative-continue .chevron {
+  width: 16px; height: 16px;
+  border-right: 1px solid var(--color-fog);
+  border-bottom: 1px solid var(--color-fog);
+  transform: rotate(45deg);
+  animation: bounce 1.8s ease infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: rotate(45deg) translate(0, 0); }
+  50% { transform: rotate(45deg) translate(4px, 4px); }
+}
+
+/* ====================================================
+   SECTION C — STICKY DESTINATIONS FAN
+   ==================================================== */
+.destinations {
+  position: relative;
+  height: 500vh;
+  background: linear-gradient(135deg, #0D0C0A 0%, #13110E 100%);
+}
+.destinations-sticky {
+  position: sticky; top: 0;
+  height: 100vh; overflow: hidden;
+  perspective: 1400px;
+}
+.destinations-header {
+  position: absolute; top: 100px; left: 8vw; z-index: 4;
+  max-width: 540px;
+}
+.destinations-label {
+  font-family: var(--font-accent); font-size: 11px;
+  letter-spacing: 0.3em; color: var(--color-ember);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+}
+.destinations-label::before { content: ""; width: 24px; height: 1px; background: var(--color-ember); }
+.destinations-title {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(40px, 4.5vw, 56px); color: var(--color-bone);
+  line-height: 1.05; margin-bottom: 16px;
+}
+.destinations-title em { font-style: italic; font-weight: 300; color: var(--color-gold); }
+.destinations-subtitle {
+  font-size: 15px; color: var(--color-fog); font-weight: 300;
+}
+.destinations-stage {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  display: flex; align-items: center; justify-content: center;
+}
+.dest-card {
+  position: absolute;
+  width: 340px; height: 500px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-deep);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  cursor: none;
+}
+.dest-card .dest-img {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  transition: transform 0.6s ease;
+}
+.dest-card::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.2) 45%, transparent 65%);
+}
+.dest-card-content {
+  position: absolute; left: 28px; right: 28px; bottom: 28px;
+  z-index: 2;
+}
+.dest-country {
+  font-family: var(--font-accent); font-size: 10px;
+  letter-spacing: 0.3em; color: var(--color-ember);
+  margin-bottom: 8px;
+}
+.dest-city {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 32px; color: var(--color-bone);
+  line-height: 1; margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.dest-descriptor {
+  font-size: 13px; color: var(--color-fog); font-weight: 300;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+.dest-explore {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 20px; border-radius: 100px;
+  border: 1px solid var(--color-ember);
+  color: var(--color-ember); font-weight: 500;
+  font-size: 12px; letter-spacing: 0.05em;
+  transition: all 0.25s ease;
+}
+.dest-card:hover .dest-img { transform: scale(1.06); }
+.dest-card.active:hover .dest-explore { background: var(--color-ember); color: var(--color-bone); }
+
+/* Progress dots beneath stage */
+.dest-progress {
+  position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 16px;
+  z-index: 5;
+}
+.dest-progress-dots { display: flex; gap: 10px; }
+.dest-progress-dots .pdot {
+  width: 4px; height: 4px; border-radius: 100px;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.4s var(--ease-out-expo);
+}
+.dest-progress-dots .pdot.active {
+  width: 28px; background: var(--color-ember);
+}
+.dest-counter {
+  font-family: var(--font-accent); font-size: 14px;
+  letter-spacing: 0.2em; color: var(--color-fog);
+  margin-left: 16px;
+}
+.dest-counter em { color: var(--color-bone); font-style: normal; }
+
+/* ====================================================
+   SECTION D — FILM MOMENT
+   ==================================================== */
+.film {
+  position: relative; height: 100vh; min-height: 720px;
+  overflow: hidden; background: #000;
+}
+.film-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-size: cover; background-position: center;
+  transform: scale(1.08);
+  transition: transform 1.4s var(--ease-out-expo);
+}
+.film.in-view .film-bg { transform: scale(1); }
+.film::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background:
+    linear-gradient(to right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 50%, transparent 100%),
+    linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 50%);
+}
+.film-content {
+  position: relative; z-index: 2; height: 100%;
+}
+.film-left {
+  position: absolute; left: 8vw; top: 50%; transform: translateY(-50%);
+  max-width: 460px;
+}
+.film-tag {
+  display: inline-flex; padding: 6px 14px; border-radius: 100px;
+  background: var(--color-ember-glow); color: var(--color-ember);
+  border: 1px solid rgba(201, 98, 47, 0.4);
+  font-family: var(--font-accent); font-size: 11px;
+  letter-spacing: 0.3em;
+  margin-bottom: 32px;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
+}
+.film.in-view .film-tag { opacity: 1; transform: translateY(0); }
+.film-title {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(56px, 6vw, 88px); color: var(--color-bone);
+  line-height: 0.9; letter-spacing: -0.02em;
+  margin-bottom: 28px;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.9s var(--ease-out-expo) 0.4s, transform 0.9s var(--ease-out-expo) 0.4s;
+}
+.film.in-view .film-title { opacity: 1; transform: translateY(0); }
+.film-title span { display: block; }
+.film-body {
+  font-size: 16px; color: var(--color-fog); line-height: 1.7; font-weight: 300;
+  max-width: 380px;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.7s ease 0.7s, transform 0.7s ease 0.7s;
+}
+.film.in-view .film-body { opacity: 1; transform: translateY(0); }
+
+/* Play button center */
+.film-play {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 88px; height: 88px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 3; cursor: none;
+  transition: all 0.3s ease;
+}
+.film-play::before {
+  content: ""; position: absolute; inset: -8px;
+  border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.15);
+  animation: pulse-ring 2.4s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+.film-play:hover { background: rgba(201, 98, 47, 0.4); transform: translate(-50%, -50%) scale(1.05); }
+.film-play svg { width: 22px; height: 22px; fill: var(--color-bone); margin-left: 4px; }
+
+/* Bottom controls */
+.film-controls {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  z-index: 3; padding: 24px 40px;
+  display: flex; align-items: center; gap: 24px;
+}
+.film-control-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-bone);
+  transition: all 0.2s ease;
+}
+.film-control-btn:hover { background: var(--color-ember); border-color: var(--color-ember); }
+.film-control-btn svg { width: 14px; height: 14px; fill: currentColor; }
+.film-time {
+  font-size: 13px; color: var(--color-fog);
+  font-variant-numeric: tabular-nums;
+  min-width: 88px;
+}
+.film-time em { color: var(--color-bone); font-style: normal; }
+.film-scrub {
+  flex: 1; height: 2px; background: rgba(255, 255, 255, 0.2);
+  position: relative; border-radius: 100px;
+  cursor: none;
+}
+.film-scrub-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--color-ember);
+  border-radius: 100px;
+  width: 11%;
+  transition: width 0.3s linear;
+}
+.film-icons { display: flex; gap: 20px; color: var(--color-fog); }
+.film-icons svg { width: 18px; height: 18px; }
+
+/* Stacked destination cards */
+.film-stack {
+  position: absolute; right: 4vw; bottom: 110px;
+  z-index: 3;
+  display: flex; gap: 16px;
+  perspective: 1000px;
+  opacity: 0; transform: translateX(80px);
+  transition: opacity 1s ease 0.6s, transform 1s var(--ease-out-expo) 0.6s;
+}
+.film.in-view .film-stack { opacity: 1; transform: translateX(0); }
+.film-stack-card {
+  width: 180px; height: 230px;
+  border-radius: 12px; overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-deep);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.4s ease;
+}
+.film-stack-card:nth-child(1) { transform: rotateY(-6deg) translateZ(20px); }
+.film-stack-card:nth-child(2) { transform: rotateY(0deg) translateY(-30px); }
+.film-stack-card:nth-child(3) { transform: rotateY(6deg) translateZ(20px); }
+.film-stack-card:hover { transform: translateY(-8px) rotateY(0); }
+.film-stack-card .img {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+}
+.film-stack-card::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 60%);
+}
+.film-stack-card .label {
+  position: absolute; left: 16px; right: 16px; bottom: 16px;
+}
+.film-stack-card .country {
+  font-family: var(--font-accent); font-size: 9px;
+  letter-spacing: 0.25em; color: var(--color-ember);
+  display: block; margin-bottom: 4px;
+}
+.film-stack-card .name {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 18px; color: var(--color-bone);
+  line-height: 1.1;
+}
+
+/* ====================================================
+   SECTION E — BENTO EXPERIENCES
+   ==================================================== */
+.experiences {
+  padding: var(--space-3xl) 40px;
+  background: var(--color-obsidian);
+}
+.exp-header {
+  max-width: 1300px; margin: 0 auto var(--space-xl);
+  display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px; align-items: end;
+}
+.exp-label {
+  font-family: var(--font-accent); font-size: 11px;
+  letter-spacing: 0.3em; color: var(--color-ember);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+}
+.exp-label::before { content: ""; width: 24px; height: 1px; background: var(--color-ember); }
+.exp-title {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(40px, 5vw, 64px); color: var(--color-bone);
+  line-height: 1.05; letter-spacing: -0.01em;
+}
+.exp-title em { font-style: italic; color: var(--color-gold); }
+.exp-subtitle {
+  font-size: 16px; color: var(--color-fog); font-weight: 300; line-height: 1.7;
+  max-width: 460px;
+}
+.bento {
+  max-width: 1300px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+.bento-cell {
+  position: relative; overflow: hidden; border-radius: 16px;
+  background: var(--color-void);
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+  cursor: none;
+}
+.bento.in-view .bento-cell { opacity: 1; transform: translateY(0); }
+.bento.in-view .bento-cell:nth-child(1) { transition-delay: 0.05s; }
+.bento.in-view .bento-cell:nth-child(2) { transition-delay: 0.15s; }
+.bento.in-view .bento-cell:nth-child(3) { transition-delay: 0.25s; }
+.bento.in-view .bento-cell:nth-child(4) { transition-delay: 0.35s; }
+.bento.in-view .bento-cell:nth-child(5) { transition-delay: 0.45s; }
+.bento.in-view .bento-cell:nth-child(6) { transition-delay: 0.55s; }
+.bento-cell .img {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  transition: transform 0.7s ease;
+}
+.bento-cell:hover .img { transform: scale(1.05); }
+.bento-cell::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 60%);
+}
+.bento-cell .body {
+  position: absolute; left: 28px; right: 28px; bottom: 28px; z-index: 2;
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+}
+.bento-cell .body .tag {
+  font-family: var(--font-accent); font-size: 10px;
+  letter-spacing: 0.3em; color: var(--color-ember);
+}
+.bento-cell .body h3 {
+  font-family: var(--font-display); font-weight: 600;
+  color: var(--color-bone); line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.bento-cell .body p {
+  font-size: 13px; color: var(--color-fog); font-weight: 300;
+  line-height: 1.5; max-width: 320px;
+}
+.bento-cell .body .arrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 18px; border-radius: 100px;
+  background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--color-bone); font-weight: 500;
+  margin-top: 6px;
+  transition: all 0.25s ease;
+}
+.bento-cell:hover .arrow { background: var(--color-ember); border-color: var(--color-ember); }
+
+.bento-cell.cell-1 { grid-column: 1 / span 7; grid-row: 1 / span 2; height: 460px; }
+.bento-cell.cell-2 { grid-column: 8 / span 5; grid-row: 1; height: 222px; }
+.bento-cell.cell-3 { grid-column: 8 / span 5; grid-row: 2; height: 222px; }
+.bento-cell.cell-4 { grid-column: 1 / span 4; grid-row: 3; height: 230px; }
+.bento-cell.cell-5 { grid-column: 5 / span 4; grid-row: 3; height: 230px; background: var(--color-void); }
+.bento-cell.cell-5::after { display: none; }
+.bento-cell.cell-5:hover .img { transform: none; }
+.bento-cell.cell-6 { grid-column: 9 / span 4; grid-row: 3; height: 230px; }
+
+.bento-cell.cell-1 h3 { font-size: 36px; }
+.bento-cell.cell-2 h3, .bento-cell.cell-3 h3 { font-size: 24px; }
+.bento-cell.cell-4 h3, .bento-cell.cell-6 h3 { font-size: 20px; }
+
+.bento-cell.cell-5 .body {
+  position: relative; inset: auto;
+  padding: 32px; height: 100%; justify-content: center;
+}
+.bento-cell.cell-5 .quote-mark {
+  font-family: var(--font-display); font-size: 80px;
+  color: var(--color-ember); opacity: 0.3; line-height: 0.5;
+}
+.bento-cell.cell-5 .quote {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: 22px; color: var(--color-bone); line-height: 1.4;
+}
+.bento-cell.cell-5 .attribution {
+  font-size: 13px; color: var(--color-fog); font-weight: 300;
+}
+
+/* ====================================================
+   SECTION F — STATS
+   ==================================================== */
+.stats {
+  background: var(--color-obsidian);
+  padding: var(--space-2xl) 40px;
+  position: relative;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.stats-row {
+  max-width: 1300px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+}
+.stat {
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  text-align: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 20px;
+}
+.stat:last-child { border-right: none; }
+.stat-num {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(56px, 6vw, 80px);
+  color: var(--color-gold);
+  line-height: 1; letter-spacing: -0.02em;
+}
+.stat-num .suffix { color: var(--color-ember); }
+.stat-desc {
+  font-size: 13px; color: var(--color-fog); font-weight: 300;
+  max-width: 180px;
+  letter-spacing: 0.05em;
+}
+
+/* ====================================================
+   SECTION G — TESTIMONIAL PARALLAX
+   ==================================================== */
+.testimonial {
+  position: relative; height: 100vh; min-height: 720px;
+  overflow: hidden;
+}
+.testimonial-bg {
+  position: absolute; inset: -10% 0;
+  background-size: cover; background-position: center;
+  will-change: transform;
+}
+.testimonial::after {
+  content: ""; position: absolute; inset: 0;
+  background: rgba(10, 10, 11, 0.55);
+}
+.testimonial-content {
+  position: relative; z-index: 2; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 40px;
+}
+.testimonial-bigquote {
+  position: absolute; top: 14%; left: 8%; z-index: 3;
+  font-family: var(--font-display); font-size: 200px; font-weight: 300;
+  color: var(--color-ember); opacity: 0.18; line-height: 1;
+  user-select: none;
+}
+.testimonial-card {
+  max-width: 720px; padding: 56px;
+  border-radius: 20px;
+  position: relative;
+}
+.testimonial-stars {
+  display: flex; gap: 4px; margin-bottom: 28px;
+}
+.testimonial-stars svg { width: 16px; height: 16px; fill: var(--color-gold); }
+.testimonial-quote {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: 28px; color: var(--color-bone); line-height: 1.5;
+  margin-bottom: 32px;
+  font-style: italic;
+}
+.testimonial-attrib {
+  display: flex; align-items: center; gap: 16px;
+}
+.testimonial-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background-size: cover; background-position: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.testimonial-name {
+  font-weight: 500; font-size: 15px; color: var(--color-bone);
+  margin-bottom: 2px;
+}
+.testimonial-journey {
+  font-size: 13px; color: var(--color-fog); font-weight: 300;
+}
+.testimonial-nav {
+  position: absolute; bottom: 56px; right: 56px;
+  display: flex; gap: 12px;
+}
+.testimonial-nav button {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-bone);
+  transition: all 0.25s ease;
+}
+.testimonial-nav button:hover { background: var(--color-ember); border-color: var(--color-ember); }
+.testimonial-nav svg { width: 14px; height: 14px; }
+.testimonial-counter {
+  position: absolute; left: 56px; bottom: 56px;
+  font-family: var(--font-accent); font-size: 13px;
+  letter-spacing: 0.2em; color: var(--color-fog);
+}
+.testimonial-counter em { color: var(--color-bone); font-style: normal; }
+
+/* ====================================================
+   SECTION H — STORIES
+   ==================================================== */
+.stories {
+  padding: var(--space-3xl) 40px;
+  background: var(--color-obsidian);
+}
+.stories-header {
+  max-width: 1300px; margin: 0 auto var(--space-xl);
+  display: flex; justify-content: space-between; align-items: end; gap: 40px;
+}
+.stories-header-left { max-width: 700px; }
+.stories-title {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(40px, 4.5vw, 52px); color: var(--color-bone);
+  line-height: 1.05; letter-spacing: -0.01em;
+}
+.stories-title em { font-style: italic; }
+.stories-viewall {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--color-ember);
+  letter-spacing: 0.05em;
+  padding-bottom: 4px; border-bottom: 1px solid var(--color-ember);
+}
+.stories-grid {
+  max-width: 1300px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+.story-card {
+  position: relative;
+  background: var(--color-void);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  opacity: 0; transform: translateY(30px);
+}
+.stories.in-view .story-card { opacity: 1; transform: translateY(0); transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo); }
+.stories.in-view .story-card:nth-child(2) { transition-delay: 0.15s; }
+.stories.in-view .story-card:nth-child(3) { transition-delay: 0.3s; }
+.story-card:hover { transform: translateY(-6px); box-shadow: 0 32px 70px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.story-image {
+  position: relative; height: 240px; overflow: hidden;
+}
+.story-image .img {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  transition: transform 0.6s ease, filter 0.6s ease;
+}
+.story-card:hover .story-image .img { transform: scale(1.05); filter: brightness(1.08); }
+.story-category {
+  position: absolute; top: 16px; left: 16px;
+  font-family: var(--font-accent); font-size: 10px;
+  letter-spacing: 0.25em; color: var(--color-ember);
+  padding: 6px 12px; border-radius: 100px;
+  background: rgba(15, 13, 11, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(201, 98, 47, 0.3);
+}
+.story-body { padding: 28px; }
+.story-meta {
+  font-size: 12px; color: var(--color-fog); font-weight: 300;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+.story-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-fog); opacity: 0.5; }
+.story-card h3 {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 24px; color: var(--color-bone);
+  line-height: 1.25; letter-spacing: -0.01em;
+  margin-bottom: 14px;
+  transition: color 0.3s ease;
+}
+.story-card:hover h3 { color: var(--color-gold); }
+.story-excerpt {
+  font-size: 14px; color: var(--color-fog); font-weight: 300;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.story-divider {
+  height: 1px; background: rgba(255, 255, 255, 0.08);
+  margin-bottom: 20px;
+}
+.story-author {
+  display: flex; align-items: center; gap: 12px;
+}
+.story-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background-size: cover; background-position: center;
+}
+.story-author-name {
+  font-size: 13px; font-weight: 500; color: var(--color-bone);
+}
+.story-author-date {
+  font-size: 12px; font-weight: 300; color: var(--color-fog);
+}
+
+/* ====================================================
+   SECTION I — CTA
+   ==================================================== */
+.cta {
+  position: relative;
+  height: 90vh; min-height: 640px;
+  overflow: hidden;
+}
+.cta-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  transform: scale(1.05);
+}
+.cta::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10,10,11,0.2) 0%, rgba(10,10,11,0.95) 100%);
+}
+.cta-content {
+  position: relative; z-index: 2;
+  height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-end;
+  padding-bottom: 18%;
+  text-align: center;
+}
+.cta-label {
+  font-family: var(--font-accent); font-size: 11px;
+  letter-spacing: 0.4em; color: var(--color-ember);
+  margin-bottom: 24px;
+}
+.cta-title {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(48px, 6vw, 80px);
+  color: var(--color-bone); line-height: 1.05;
+  letter-spacing: -0.01em;
+  max-width: 900px;
+  margin-bottom: 24px;
+}
+.cta-title em { font-style: italic; color: var(--color-gold); }
+.cta-sub {
+  font-size: 18px; color: var(--color-fog); font-weight: 300;
+  max-width: 560px;
+  margin-bottom: 48px;
+  line-height: 1.7;
+}
+
+/* ====================================================
+   FOOTER
+   ==================================================== */
+.footer {
+  background: #050505;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: var(--space-2xl) 40px var(--space-xl);
+}
+.footer-grid {
+  max-width: 1300px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  gap: 60px;
+}
+.footer h4 {
+  font-family: var(--font-accent); font-size: 11px;
+  letter-spacing: 0.3em; color: var(--color-bone);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+.footer-brand-name {
+  font-weight: 500; font-size: 18px; letter-spacing: 0.3em;
+  color: var(--color-bone); margin-bottom: 12px;
+}
+.footer-tagline {
+  font-size: 14px; color: var(--color-fog); font-weight: 300;
+  margin-bottom: 32px;
+}
+.footer-social {
+  display: flex; gap: 16px;
+  margin-bottom: 32px;
+}
+.footer-social a {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-fog);
+  transition: all 0.25s ease;
+}
+.footer-social a:hover { color: var(--color-gold); border-color: var(--color-gold); transform: translateY(-2px); }
+.footer-social svg { width: 14px; height: 14px; }
+.footer-copy {
+  font-size: 12px; color: var(--color-fog); font-weight: 300;
+  letter-spacing: 0.02em;
+}
+.footer ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer li a {
+  font-size: 14px; color: var(--color-fog); font-weight: 300;
+  transition: color 0.25s ease;
+}
+.footer li a:hover { color: var(--color-bone); }
+.footer-newsletter p {
+  font-size: 14px; color: var(--color-fog); font-weight: 300;
+  margin-bottom: 16px; line-height: 1.6;
+}
+.footer-input {
+  position: relative; display: flex;
+  border-radius: 100px; overflow: hidden;
+  background: rgba(15, 13, 11, 0.72);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.footer-input input {
+  flex: 1; padding: 14px 20px;
+  background: transparent; border: none; outline: none;
+  font-size: 13px; color: var(--color-bone);
+}
+.footer-input input::placeholder { color: var(--color-fog); opacity: 0.7; }
+.footer-input button {
+  width: 48px; display: flex; align-items: center; justify-content: center;
+  color: var(--color-ember);
+  transition: all 0.25s ease;
+}
+.footer-input button:hover { color: var(--color-bone); background: var(--color-ember); }
+.footer-bottom {
+  max-width: 1300px; margin: 80px auto 0;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--color-fog); font-weight: 300;
+}
+.footer-bottom-links { display: flex; gap: 24px; }
+.footer-bottom-links a:hover { color: var(--color-bone); }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .hero-slide.entering { animation: none; }
+}
+
+/* ---------- Responsive cap ---------- */
+@media (max-width: 1100px) {
+  .nav-center { display: none; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+  .stat:nth-child(2) { border-right: none; }
+  .bento { grid-template-columns: repeat(6, 1fr); }
+  .bento-cell.cell-1 { grid-column: 1 / -1; grid-row: auto; }
+  .bento-cell.cell-2, .bento-cell.cell-3 { grid-column: span 3; grid-row: auto; }
+  .bento-cell.cell-4, .bento-cell.cell-5, .bento-cell.cell-6 { grid-column: span 2; grid-row: auto; }
+  .stories-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .film-stack { display: none; }
+  .hero-photos { display: none; }
+  .progress-rail, .social-dock { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- =================== GLOBAL UI =================== -->
+<div class="grain"></div>
+<div class="cursor-dot"></div>
+<div class="cursor-ring"><span class="cursor-label">EXPLORE</span></div>
+
+<!-- Nav -->
+<nav class="nav" id="nav">
+  <div class="nav-left">
+    <div class="nav-brand">TERRANOVA</div>
+    <div class="nav-rule"></div>
+    <div class="nav-tagline">Journeys Remembered</div>
+  </div>
+  <div class="nav-center">
+    <a class="nav-link active" href="#hero">Destinations</a>
+    <a class="nav-link" href="#narrative">Stories</a>
+    <a class="nav-link" href="#experiences">Experiences</a>
+    <a class="nav-link" href="#stories">Journal</a>
+    <a class="nav-link" href="#cta">Contact</a>
+  </div>
+  <div class="nav-right">
+    <a class="btn btn-ghost btn-sm" href="#cta">Begin Journey</a>
+  </div>
+</nav>
+
+<!-- Social dock (left) -->
+<div class="social-dock">
+  <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/></svg></a>
+  <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 22v-8h3l1-4h-4V7.5c0-1.1.5-2 2-2h2V2h-3c-3 0-5 1.8-5 5v3H6v4h3v8h4z"/></svg></a>
+  <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+  <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5c0 1.4-1.13 2.5-2.49 2.5S0 4.9 0 3.5C0 2.13 1.13 1 2.5 1S4.98 2.13 4.98 3.5zM.4 8h4.18v13H.4V8zm7.4 0h4v1.78h.06c.55-1.04 1.9-2.13 3.92-2.13C20.27 7.65 21 9.95 21 13v8h-4.18v-7.1c0-1.7-.03-3.87-2.36-3.87-2.36 0-2.72 1.84-2.72 3.74V21H7.8V8z"/></svg></a>
+  <div class="dock-line"></div>
+</div>
+
+<!-- Right progress rail -->
+<aside class="progress-rail" id="progressRail">
+  <div class="progress-dot active" data-section="hero"><span class="dot-label">The World Opens</span></div>
+  <div class="progress-dot" data-section="narrative"><span class="dot-label">The Call</span></div>
+  <div class="progress-dot" data-section="destinations"><span class="dot-label">Six Worlds</span></div>
+  <div class="progress-dot" data-section="film"><span class="dot-label">Nagano</span></div>
+  <div class="progress-dot" data-section="experiences"><span class="dot-label">Experiences</span></div>
+  <div class="progress-dot" data-section="stories"><span class="dot-label">Dispatches</span></div>
+  <div class="progress-dot" data-section="cta"><span class="dot-label">Invitation</span></div>
+</aside>
+
+<!-- Scroll bar -->
+<div class="scroll-bar" id="scrollBar"></div>
+
+
+<!-- =================== HERO =================== -->
+<section class="hero" id="hero">
+  <div class="hero-bg" id="heroBg">
+    <div class="hero-slide active entering" data-bg="https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=2400&q=80" style="background-image:url('https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=2400&q=80')"></div>
+    <div class="hero-slide" data-bg="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=2400&q=80"></div>
+    <div class="hero-slide" data-bg="https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=2400&q=80"></div>
+  </div>
+  <div class="hero-gradient"></div>
+
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-region" id="heroRegion">SOUTHEAST ASIA</div>
+      <h1 class="hero-title">
+        <span class="line line-1"><span class="line-inner" id="heroLine1">Lost in</span></span>
+        <span class="line line-2"><span class="line-inner" id="heroLine2">Borobudur</span></span>
+        <span class="line line-3"><span class="line-inner" id="heroLine3">Temple</span></span>
+      </h1>
+      <p class="hero-about" id="heroAbout">A thousand-year-old mandala carved from volcanic stone, waiting in the silence of Central Java.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#cta">Begin Your Story <span>→</span></a>
+        <a class="btn btn-secondary" href="#film">Watch Film <span>▶</span></a>
+      </div>
+    </div>
+
+    <div class="hero-switcher" id="heroSwitcher">
+      <div class="switcher-item active" data-idx="0">
+        <span class="switcher-num">01</span>
+        <span>Borobudur Temple</span>
+      </div>
+      <div class="switcher-item" data-idx="1">
+        <span class="switcher-num">02</span>
+        <span>Bali Rice Terraces</span>
+      </div>
+      <div class="switcher-item" data-idx="2">
+        <span class="switcher-num">03</span>
+        <span>Raja Ampat Islands</span>
+      </div>
+    </div>
+
+    <div class="hero-photos">
+      <div class="hero-photos-label">Photos</div>
+      <div class="hero-photos-strip" id="heroPhotos">
+        <div class="thumb active" style="background-image:url('https://images.unsplash.com/photo-1555400113-95ec6e4c93a8?auto=format&fit=crop&w=400&q=80')"></div>
+        <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1604608672516-f1b9b1d1f1c1?auto=format&fit=crop&w=400&q=80')"></div>
+        <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=400&q=80')"></div>
+        <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&w=400&q=80')"></div>
+      </div>
+    </div>
+
+    <div class="hero-strip glass-panel" id="heroStrip">
+      <div class="strip-item active">
+        <svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+        Yogyakarta
+      </div>
+      <div class="strip-item">
+        <svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+        Bali
+      </div>
+      <div class="strip-item">
+        <svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+        Raja Ampat
+      </div>
+      <div class="strip-item">
+        <svg class="pin" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+        Komodo
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =================== NARRATIVE =================== -->
+<section class="narrative" id="narrative">
+  <div class="narrative-line"></div>
+  <div class="narrative-content">
+    <h2 class="narrative-quote" data-words>Some places don't just sit on a map. They live inside you long after you've left them behind.</h2>
+    <div class="narrative-rule"></div>
+    <p class="narrative-body">We don't offer tours. We architect moments — the kind that settle into your memory and refuse to leave. Every itinerary we craft begins with one question: what will you remember when you close your eyes ten years from now?</p>
+  </div>
+  <div class="narrative-continue">
+    <span class="label">Continue</span>
+    <span class="chevron"></span>
+  </div>
+</section>
+
+
+<!-- =================== DESTINATIONS (sticky fan) =================== -->
+<section class="destinations" id="destinations">
+  <div class="destinations-sticky">
+    <div class="destinations-header">
+      <div class="destinations-label">Destinations</div>
+      <h2 class="destinations-title">Six Worlds, <em>One Compass.</em></h2>
+      <p class="destinations-subtitle">Scroll to drift through each. Each card is a doorway — not a destination.</p>
+    </div>
+
+    <div class="destinations-stage" id="destStage">
+      <article class="dest-card" data-idx="0">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=900&q=80')"></div>
+        <div class="dest-card-content">
+          <div class="dest-country">JAPAN — KANSAI</div>
+          <h3 class="dest-city">Kyoto</h3>
+          <p class="dest-descriptor">Bamboo shadows, paper lanterns, and the silence of moss gardens at dawn.</p>
+          <span class="dest-explore">Explore <span>→</span></span>
+        </div>
+      </article>
+      <article class="dest-card" data-idx="1">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1597212720291-3e2e5e2e9bbc?auto=format&fit=crop&w=900&q=80'), url('https://images.unsplash.com/photo-1539020140153-e479b8c5a51f?auto=format&fit=crop&w=900&q=80')"></div>
+        <div class="dest-card-content">
+          <div class="dest-country">MOROCCO — MARRAKECH</div>
+          <h3 class="dest-city">Marrakech</h3>
+          <p class="dest-descriptor">Spice-warmed alleys and rooftops painted by the afternoon sun.</p>
+          <span class="dest-explore">Explore <span>→</span></span>
+        </div>
+      </article>
+      <article class="dest-card" data-idx="2">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1562310503-a918c4c61e38?auto=format&fit=crop&w=900&q=80')"></div>
+        <div class="dest-card-content">
+          <div class="dest-country">USA — CALIFORNIA</div>
+          <h3 class="dest-city">Yosemite</h3>
+          <p class="dest-descriptor">Granite cathedrals lit by an alpenglow that lasts only ten minutes.</p>
+          <span class="dest-explore">Explore <span>→</span></span>
+        </div>
+      </article>
+      <article class="dest-card" data-idx="3">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=900&q=80')"></div>
+        <div class="dest-card-content">
+          <div class="dest-country">GREECE — CYCLADES</div>
+          <h3 class="dest-city">Santorini</h3>
+          <p class="dest-descriptor">Whitewashed cliffs that drink the sun before letting go of the day.</p>
+          <span class="dest-explore">Explore <span>→</span></span>
+        </div>
+      </article>
+      <article class="dest-card" data-idx="4">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=900&q=80')"></div>
+        <div class="dest-card-content">
+          <div class="dest-country">PERU — ANDES</div>
+          <h3 class="dest-city">Machu Picchu</h3>
+          <p class="dest-descriptor">A citadel of breath and altitude, where clouds walk through old stone.</p>
+          <span class="dest-explore">Explore <span>→</span></span>
+        </div>
+      </article>
+      <article class="dest-card" data-idx="5">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=900&q=80')"></div>
+        <div class="dest-card-content">
+          <div class="dest-country">TANZANIA — SERENGETI</div>
+          <h3 class="dest-city">Serengeti</h3>
+          <p class="dest-descriptor">Open plains where the horizon teaches a quieter kind of awe.</p>
+          <span class="dest-explore">Explore <span>→</span></span>
+        </div>
+      </article>
+    </div>
+
+    <div class="dest-progress">
+      <div class="dest-progress-dots" id="destDots">
+        <div class="pdot active"></div><div class="pdot"></div><div class="pdot"></div>
+        <div class="pdot"></div><div class="pdot"></div><div class="pdot"></div>
+      </div>
+      <div class="dest-counter"><em id="destCurrent">01</em> / 06</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =================== FILM =================== -->
+<section class="film" id="film">
+  <div class="film-bg" style="background-image:url('https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=2400&q=80')"></div>
+  <div class="film-content">
+    <div class="film-left">
+      <div class="film-tag">JAPAN ALPS</div>
+      <h2 class="film-title">
+        <span>Nagano</span>
+        <span style="font-weight:300; font-style:italic;">Prefecture</span>
+      </h2>
+      <p class="film-body">Set within the majestic Japan Alps — a cultural treasure trove of historic shrines and temples, where snow falls on cedar in absolute silence.</p>
+    </div>
+
+    <button class="film-play" id="filmPlay" aria-label="Play film">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+
+    <div class="film-stack" id="filmStack">
+      <div class="film-stack-card">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=600&q=80')"></div>
+        <div class="label"><span class="country">SAHARA</span><span class="name">Marrakech<br/>Morocco</span></div>
+      </div>
+      <div class="film-stack-card">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1562310503-a918c4c61e38?auto=format&fit=crop&w=600&q=80')"></div>
+        <div class="label"><span class="country">SIERRA NEVADA</span><span class="name">Yosemite<br/>National Park</span></div>
+      </div>
+      <div class="film-stack-card">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=600&q=80')"></div>
+        <div class="label"><span class="country">CYCLADES</span><span class="name">Santorini<br/>Greece</span></div>
+      </div>
+    </div>
+
+    <div class="film-controls">
+      <button class="film-control-btn" id="filmToggle" aria-label="Play / Pause">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <div class="film-time"><em id="filmTime">0:01</em> / 0:09</div>
+      <div class="film-scrub" id="filmScrub">
+        <div class="film-scrub-fill" id="filmFill"></div>
+      </div>
+      <div class="film-icons">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 5h5V3H3v7h2V5zm14 0v5h2V3h-7v2h5zM5 14H3v7h7v-2H5v-5zm14 5h-5v2h7v-7h-2v5z"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =================== EXPERIENCES (bento) =================== -->
+<section class="experiences" id="experiences">
+  <div class="exp-header">
+    <div>
+      <div class="exp-label">Experiences</div>
+      <h2 class="exp-title">We craft the kind of <em>mornings</em> you'll dream about.</h2>
+    </div>
+    <p class="exp-subtitle">Six modes of travel, woven into one itinerary. Each detail is chosen the way a chef picks salt — by hand, by feel, by year of practice.</p>
+  </div>
+
+  <div class="bento" id="bento">
+    <div class="bento-cell cell-1">
+      <div class="img" style="background-image:url('https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1400&q=80')"></div>
+      <div class="body">
+        <span class="tag">SIGNATURE</span>
+        <h3>Private Wilderness Camps</h3>
+        <p>Open-air canvas, lanterns at dusk, and a fire that talks to the stars. Sleep inside the landscape, not next to it.</p>
+        <span class="arrow">Discover →</span>
+      </div>
+    </div>
+    <div class="bento-cell cell-2">
+      <div class="img" style="background-image:url('https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=900&q=80')"></div>
+      <div class="body">
+        <span class="tag">DEEP ROOTS</span>
+        <h3>Cultural Immersion</h3>
+      </div>
+    </div>
+    <div class="bento-cell cell-3">
+      <div class="img" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=80')"></div>
+      <div class="body">
+        <span class="tag">PALATE</span>
+        <h3>Culinary Expeditions</h3>
+      </div>
+    </div>
+    <div class="bento-cell cell-4">
+      <div class="img" style="background-image:url('https://images.unsplash.com/photo-1473625247510-8ceb1760943f?auto=format&fit=crop&w=900&q=80')"></div>
+      <div class="body">
+        <span class="tag">AIR</span>
+        <h3>Helicopter Transfers</h3>
+      </div>
+    </div>
+    <div class="bento-cell cell-5">
+      <div class="body">
+        <span class="quote-mark">"</span>
+        <p class="quote">The best journeys leave you a stranger to who you were last Tuesday.</p>
+        <span class="attribution">— Field notes, Patagonia, '24</span>
+      </div>
+    </div>
+    <div class="bento-cell cell-6">
+      <div class="img" style="background-image:url('https://images.unsplash.com/photo-1582967788606-a171c1080cb0?auto=format&fit=crop&w=900&q=80')"></div>
+      <div class="body">
+        <span class="tag">DEEP BLUE</span>
+        <h3>Underwater Expeditions</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =================== STATS =================== -->
+<section class="stats" id="stats">
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num"><span class="counter" data-target="147">0</span><span class="suffix">+</span></div>
+      <div class="stat-desc">Countries explored on foot, by hand</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num"><span class="counter" data-target="12">0</span><span class="suffix">k</span></div>
+      <div class="stat-desc">Journeys curated, never repeated</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num"><span class="counter" data-target="98">0</span><span class="suffix">%</span></div>
+      <div class="stat-desc">Return to dream again with us</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num"><span class="counter" data-target="2.4">0</span><span class="suffix">M</span></div>
+      <div class="stat-desc">Kilometres of road remembered</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =================== TESTIMONIAL =================== -->
+<section class="testimonial" id="testimonial">
+  <div class="testimonial-bg" id="testimonialBg" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2400&q=80')"></div>
+  <div class="testimonial-bigquote">"</div>
+  <div class="testimonial-content">
+    <div class="testimonial-card glass-panel" id="testimonialCard">
+      <div class="testimonial-stars">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 7 7 .5-5.5 4.5L18 21l-6-3.5L6 21l1.5-7L2 9.5 9 9z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 7 7 .5-5.5 4.5L18 21l-6-3.5L6 21l1.5-7L2 9.5 9 9z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 7 7 .5-5.5 4.5L18 21l-6-3.5L6 21l1.5-7L2 9.5 9 9z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 7 7 .5-5.5 4.5L18 21l-6-3.5L6 21l1.5-7L2 9.5 9 9z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 2l3 7 7 .5-5.5 4.5L18 21l-6-3.5L6 21l1.5-7L2 9.5 9 9z"/></svg>
+      </div>
+      <p class="testimonial-quote" id="testimonialQuote">We didn't go on a trip. We were handed a chapter of a life we'd half-forgotten we wanted. Every guide knew our names. Every meal had a reason. We came home different — quietly, but clearly.</p>
+      <div class="testimonial-attrib">
+        <div class="testimonial-avatar" id="testimonialAvatar" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80')"></div>
+        <div>
+          <div class="testimonial-name" id="testimonialName">Elena Marchetti</div>
+          <div class="testimonial-journey" id="testimonialJourney">Patagonia Expedition · March 2025</div>
+        </div>
+      </div>
+      <div class="testimonial-counter"><em id="tCurrent">01</em> / 03</div>
+      <div class="testimonial-nav">
+        <button id="tPrev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button id="tNext" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =================== STORIES =================== -->
+<section class="stories" id="stories">
+  <div class="stories-header">
+    <div class="stories-header-left">
+      <div class="exp-label">Journal</div>
+      <h2 class="stories-title">Dispatches from <em>the Road.</em></h2>
+    </div>
+    <a class="stories-viewall" href="#">View All Stories →</a>
+  </div>
+
+  <div class="stories-grid">
+    <article class="story-card">
+      <div class="story-image">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=900&q=80')"></div>
+        <div class="story-category">FIELD NOTES</div>
+      </div>
+      <div class="story-body">
+        <div class="story-meta">8 min read <span class="dot"></span> Patagonia</div>
+        <h3>What the wind taught us at the edge of the world</h3>
+        <p class="story-excerpt">Three days walking south of Torres del Paine, where the cliffs lean toward the sea and the only sound is granite breathing.</p>
+        <div class="story-divider"></div>
+        <div class="story-author">
+          <div class="story-avatar" style="background-image:url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80')"></div>
+          <div>
+            <div class="story-author-name">Theo Rinaldi</div>
+            <div class="story-author-date">May 12, 2026</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="story-card">
+      <div class="story-image">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=900&q=80')"></div>
+        <div class="story-category">CULTURE</div>
+      </div>
+      <div class="story-body">
+        <div class="story-meta">6 min read <span class="dot"></span> Marrakech</div>
+        <h3>The night market that doesn't sleep, and the boy who runs it</h3>
+        <p class="story-excerpt">In the Jemaa el-Fnaa, every lantern is a small economy of attention — and every storyteller earns their dinner one breath at a time.</p>
+        <div class="story-divider"></div>
+        <div class="story-author">
+          <div class="story-avatar" style="background-image:url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80')"></div>
+          <div>
+            <div class="story-author-name">Amira Hosseini</div>
+            <div class="story-author-date">Apr 28, 2026</div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="story-card">
+      <div class="story-image">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1542640244-7e672d6cef4e?auto=format&fit=crop&w=900&q=80')"></div>
+        <div class="story-category">PILGRIMAGE</div>
+      </div>
+      <div class="story-body">
+        <div class="story-meta">12 min read <span class="dot"></span> Bhutan</div>
+        <h3>Climbing to a monastery that exists because someone believed first</h3>
+        <p class="story-excerpt">Tiger's Nest is not a viewpoint. It is a question, asked by a cliff, of anyone willing to walk three hours to reach it.</p>
+        <div class="story-divider"></div>
+        <div class="story-author">
+          <div class="story-avatar" style="background-image:url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80')"></div>
+          <div>
+            <div class="story-author-name">Jonas Aaltonen</div>
+            <div class="story-author-date">Mar 03, 2026</div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+
+<!-- =================== CTA =================== -->
+<section class="cta" id="cta">
+  <div class="cta-bg" id="ctaBg" style="background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2400&q=80')"></div>
+  <div class="cta-content">
+    <div class="cta-label">THE INVITATION</div>
+    <h2 class="cta-title">Your story is <em>still being written.</em></h2>
+    <p class="cta-sub">Let us help you fill the most important chapter — the one you'll close your eyes to remember.</p>
+    <a class="btn btn-primary btn-hero" href="#">Start Planning Your Journey <span>→</span></a>
+  </div>
+</section>
+
+
+<!-- =================== FOOTER =================== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name">TERRANOVA</div>
+      <p class="footer-tagline">Journeys remembered. Crafted, never packaged.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 22v-8h3l1-4h-4V7.5c0-1.1.5-2 2-2h2V2h-3c-3 0-5 1.8-5 5v3H6v4h3v8h4z"/></svg></a>
+        <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231z"/></svg></a>
+        <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.4 2.4 0 00-1.7-1.7C18.2 5 12 5 12 5s-6.2 0-7.9.5A2.4 2.4 0 002.4 7.2C2 8.9 2 12 2 12s0 3.1.4 4.8a2.4 2.4 0 001.7 1.7C5.8 19 12 19 12 19s6.2 0 7.9-.5a2.4 2.4 0 001.7-1.7c.4-1.7.4-4.8.4-4.8s0-3.1-.4-4.8zM10 15V9l5 3-5 3z"/></svg></a>
+      </div>
+      <p class="footer-copy">© 2026 Terranova. Crafted with curiosity.</p>
+    </div>
+
+    <div>
+      <h4>Destinations</h4>
+      <ul>
+        <li><a href="#">Southeast Asia</a></li>
+        <li><a href="#">South America</a></li>
+        <li><a href="#">Africa & Safari</a></li>
+        <li><a href="#">Mediterranean</a></li>
+        <li><a href="#">Japan & Korea</a></li>
+        <li><a href="#">Polar Expeditions</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Studio</h4>
+      <ul>
+        <li><a href="#">Our Approach</a></li>
+        <li><a href="#">The Field Team</a></li>
+        <li><a href="#">Press & Editorial</a></li>
+        <li><a href="#">Sustainability</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-newsletter">
+      <h4>The Field Letter</h4>
+      <p>A monthly dispatch of one place, one photograph, one idea worth your slow morning.</p>
+      <div class="footer-input">
+        <input type="email" placeholder="your@email.com" />
+        <button aria-label="Subscribe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Designed in transit. Written from a small room in Lisbon.</span>
+    <div class="footer-bottom-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Cookies</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ==========================================================
+   TERRANOVA — front-end choreography
+   ========================================================== */
+(function () {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------------- Custom cursor ---------------- */
+  const dot = $('.cursor-dot');
+  const ring = $('.cursor-ring');
+  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  let rx = mx, ry = my;
+  window.addEventListener('mousemove', (e) => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
+  });
+  function tickCursor() {
+    rx = lerp(rx, mx, 0.18);
+    ry = lerp(ry, my, 0.18);
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+    requestAnimationFrame(tickCursor);
+  }
+  if (!reduced) requestAnimationFrame(tickCursor);
+  // hover targets
+  const hoverSel = 'a, button, .switcher-item, .strip-item, .thumb, .dest-card, .bento-cell, .story-card, .film-scrub, .progress-dot, .film-stack-card';
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest(hoverSel)) document.body.classList.add('cursor-hover');
+    if (e.target.closest('.film-play, .film-bg')) {
+      document.body.classList.add('cursor-video');
+      const lbl = ring.querySelector('.cursor-label');
+      if (lbl) lbl.textContent = 'PLAY';
+    }
+  });
+  document.addEventListener('mouseout', (e) => {
+    if (e.target.closest(hoverSel)) document.body.classList.remove('cursor-hover');
+    if (e.target.closest('.film-play, .film-bg')) {
+      document.body.classList.remove('cursor-video');
+      const lbl = ring.querySelector('.cursor-label');
+      if (lbl) lbl.textContent = 'EXPLORE';
+    }
+  });
+
+  /* ---------------- Nav scroll state ---------------- */
+  const nav = $('#nav');
+  const scrollBar = $('#scrollBar');
+  function onScroll() {
+    const y = window.scrollY;
+    nav.classList.toggle('scrolled', y > 80);
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    scrollBar.style.width = (clamp(y / h, 0, 1) * 100) + '%';
+    parallax(y);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ---------------- Hero load entry ---------------- */
+  const hero = $('#hero');
+  requestAnimationFrame(() => {
+    setTimeout(() => hero.classList.add('loaded'), 200);
+  });
+
+  /* ---------------- Hero destination switcher ---------------- */
+  const HERO_DESTS = [
+    {
+      region: 'SOUTHEAST ASIA',
+      line1: 'Lost in',
+      line2: 'Borobudur',
+      line3: 'Temple',
+      about: "A thousand-year-old mandala carved from volcanic stone, waiting in the silence of Central Java.",
+      bg: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=2400&q=80'
+    },
+    {
+      region: 'INDONESIA — BALI',
+      line1: 'Stepped in',
+      line2: 'Tegallalang',
+      line3: 'at dawn',
+      about: "Tiered emerald paddies climb the hills like a hand-stitched green map of patience.",
+      bg: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=2400&q=80'
+    },
+    {
+      region: 'WEST PAPUA',
+      line1: 'Adrift across',
+      line2: 'Raja Ampat',
+      line3: 'archipelago',
+      about: "Karst islands rise from turquoise as if the sea were holding them up for you to admire.",
+      bg: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=2400&q=80'
+    }
+  ];
+  const slideEls = $$('.hero-slide');
+  const switcherItems = $$('.switcher-item');
+  let currentDest = 0;
+  let heroTimer = null;
+
+  function setHeroDest(idx, manual=false) {
+    if (idx === currentDest && manual) return;
+    const d = HERO_DESTS[idx];
+    // Update text with crossfade
+    const left = $('.hero-left');
+    left.style.transition = 'opacity 0.5s ease';
+    left.style.opacity = '0';
+    setTimeout(() => {
+      $('#heroRegion').textContent = d.region;
+      $('#heroLine1').textContent = d.line1;
+      $('#heroLine2').textContent = d.line2;
+      $('#heroLine3').textContent = d.line3;
+      $('#heroAbout').textContent = d.about;
+      left.style.opacity = '1';
+    }, 500);
+    // Update slides
+    slideEls.forEach((el, i) => {
+      el.classList.remove('active', 'entering');
+      if (i === idx) {
+        if (!el.style.backgroundImage) el.style.backgroundImage = `url('${d.bg}')`;
+        el.classList.add('active', 'entering');
+      }
+    });
+    // Update switcher
+    switcherItems.forEach((el, i) => el.classList.toggle('active', i === idx));
+    // Update strip active
+    $$('.strip-item').forEach((el, i) => el.classList.toggle('active', i === idx % 4));
+    // Photos active (cycle through thumbs)
+    $$('#heroPhotos .thumb').forEach((el, i) => el.classList.toggle('active', i === idx));
+    currentDest = idx;
+  }
+  switcherItems.forEach((el) => {
+    el.addEventListener('click', () => {
+      setHeroDest(parseInt(el.dataset.idx, 10), true);
+      restartHeroTimer();
+    });
+  });
+  $$('#heroPhotos .thumb').forEach((el, i) => {
+    el.addEventListener('click', () => {
+      if (i < HERO_DESTS.length) { setHeroDest(i, true); restartHeroTimer(); }
+    });
+  });
+  function restartHeroTimer() {
+    clearInterval(heroTimer);
+    heroTimer = setInterval(() => setHeroDest((currentDest + 1) % HERO_DESTS.length), 7000);
+  }
+  restartHeroTimer();
+
+  /* ---------------- Narrative word-split ---------------- */
+  $$('[data-words]').forEach((el) => {
+    const text = el.textContent.trim();
+    el.innerHTML = '';
+    text.split(/\s+/).forEach((w, i) => {
+      const span = document.createElement('span');
+      span.className = 'word';
+      span.textContent = w + ' ';
+      span.style.transitionDelay = (i * 0.04) + 's';
+      el.appendChild(span);
+    });
+  });
+
+  /* ---------------- IntersectionObserver entry ---------------- */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in-view');
+        if (e.target.id === 'stats') runCounters();
+      }
+    });
+  }, { threshold: 0.15 });
+  ['narrative', 'film', 'stats', 'testimonial', 'cta'].forEach((id) => {
+    const el = $('#' + id); if (el) io.observe(el);
+  });
+  // For .bento and .stories grids
+  const bentoEl = $('#bento'); if (bentoEl) io.observe(bentoEl);
+  const storiesEl = $('#stories'); if (storiesEl) io.observe(storiesEl);
+
+  /* ---------------- Counters ---------------- */
+  let countersRan = false;
+  function runCounters() {
+    if (countersRan) return;
+    countersRan = true;
+    $$('.counter').forEach((el) => {
+      const target = parseFloat(el.dataset.target);
+      const isFloat = !Number.isInteger(target);
+      const dur = 2000;
+      const start = performance.now();
+      function step(now) {
+        const t = clamp((now - start) / dur, 0, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const val = target * eased;
+        el.textContent = isFloat ? val.toFixed(1) : Math.floor(val);
+        if (t < 1) requestAnimationFrame(step);
+        else el.textContent = isFloat ? target.toFixed(1) : target;
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  /* ---------------- Destinations fan (scroll-jacked) ---------------- */
+  const destSection = $('#destinations');
+  const destCards = $$('.dest-card');
+  const destDots = $$('#destDots .pdot');
+  const destCurrent = $('#destCurrent');
+  const N = destCards.length;
+
+  function layoutCards(progress) {
+    // progress 0..1 across the whole sticky region
+    // Map progress to "active index" in float
+    const t = progress * (N - 1);
+    destCards.forEach((card, i) => {
+      const delta = i - t; // -..+, 0 means center
+      const abs = Math.abs(delta);
+      // arc fan
+      const x = delta * 360; // px offset
+      const z = -abs * 90;
+      const rotY = clamp(delta * -14, -28, 28);
+      const scale = clamp(1.06 - abs * 0.12, 0.7, 1.06);
+      const opacity = abs > 2.6 ? 0 : clamp(1 - abs * 0.22, 0.25, 1);
+      const yLift = abs * 8;
+      card.style.transform = `translate3d(${x}px, ${yLift}px, ${z}px) rotateY(${rotY}deg) scale(${scale})`;
+      card.style.opacity = opacity;
+      card.style.zIndex = String(100 - Math.round(abs * 10));
+      card.classList.toggle('active', Math.round(t) === i);
+    });
+    const idx = clamp(Math.round(t), 0, N - 1);
+    destDots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    destCurrent.textContent = String(idx + 1).padStart(2, '0');
+  }
+  layoutCards(0);
+
+  let destProgress = 0;
+  let destTarget = 0;
+  function tickDest() {
+    destProgress = lerp(destProgress, destTarget, 0.1);
+    layoutCards(destProgress);
+    requestAnimationFrame(tickDest);
+  }
+  if (!reduced) requestAnimationFrame(tickDest);
+
+  function updateDestProgress() {
+    const rect = destSection.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const total = destSection.offsetHeight - vh;
+    const scrolled = clamp(-rect.top, 0, total);
+    destTarget = total > 0 ? scrolled / total : 0;
+    if (reduced) { destProgress = destTarget; layoutCards(destProgress); }
+  }
+
+  /* ---------------- Parallax ---------------- */
+  const testimonialBg = $('#testimonialBg');
+  const ctaBg = $('#ctaBg');
+  function parallax(y) {
+    if (testimonialBg) {
+      const sec = $('#testimonial');
+      const rect = sec.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (rect.top < vh && rect.bottom > 0) {
+        const off = (vh - rect.top) * 0.18;
+        testimonialBg.style.transform = `translate3d(0, ${-off + 60}px, 0)`;
+      }
+    }
+    if (ctaBg) {
+      const sec = $('#cta');
+      const rect = sec.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (rect.top < vh && rect.bottom > 0) {
+        const off = (vh - rect.top) * 0.12;
+        ctaBg.style.transform = `translate3d(0, ${-off * 0.5}px, 0) scale(1.05)`;
+      }
+    }
+    updateDestProgress();
+    updateProgressRail();
+  }
+
+  /* ---------------- Progress rail active ---------------- */
+  const railDots = $$('#progressRail .progress-dot');
+  function updateProgressRail() {
+    const vh = window.innerHeight;
+    let activeIdx = 0;
+    railDots.forEach((d, i) => {
+      const sec = document.getElementById(d.dataset.section);
+      if (!sec) return;
+      const r = sec.getBoundingClientRect();
+      if (r.top < vh * 0.45 && r.bottom > vh * 0.45) activeIdx = i;
+    });
+    railDots.forEach((d, i) => d.classList.toggle('active', i === activeIdx));
+    // Nav link sync
+    const sections = ['hero', 'narrative', 'experiences', 'stories', 'cta'];
+    const navLinks = $$('.nav-link');
+    // Find nearest
+    let nearest = 0;
+    sections.forEach((id, i) => {
+      const sec = document.getElementById(id);
+      if (sec) {
+        const r = sec.getBoundingClientRect();
+        if (r.top < vh * 0.45) nearest = i;
+      }
+    });
+    navLinks.forEach((l, i) => l.classList.toggle('active', i === nearest));
+  }
+
+  // Click dots to scroll
+  railDots.forEach((d) => {
+    d.addEventListener('click', () => {
+      const sec = document.getElementById(d.dataset.section);
+      if (sec) window.scrollTo({ top: sec.offsetTop, behavior: 'smooth' });
+    });
+  });
+
+  /* ---------------- Film play simulation ---------------- */
+  const filmPlay = $('#filmPlay');
+  const filmToggle = $('#filmToggle');
+  const filmFill = $('#filmFill');
+  const filmTime = $('#filmTime');
+  let filmPlaying = false;
+  let filmPct = 11; // matches static fill
+  let filmTickId = null;
+
+  function fmtTime(pct) {
+    const totalSec = 9;
+    const s = Math.round((pct / 100) * totalSec);
+    return '0:' + String(s).padStart(2, '0');
+  }
+  function tickFilm() {
+    if (!filmPlaying) return;
+    filmPct = (filmPct + 0.4) % 100;
+    filmFill.style.width = filmPct + '%';
+    filmTime.textContent = fmtTime(filmPct);
+    filmTickId = setTimeout(tickFilm, 40);
+  }
+  function toggleFilm() {
+    filmPlaying = !filmPlaying;
+    if (filmPlaying) tickFilm();
+    else clearTimeout(filmTickId);
+    const icon = filmPlaying
+      ? '<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>'
+      : '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+    filmPlay.innerHTML = icon;
+    filmToggle.innerHTML = icon;
+    filmPlay.style.opacity = filmPlaying ? '0.3' : '1';
+  }
+  filmPlay.addEventListener('click', toggleFilm);
+  filmToggle.addEventListener('click', toggleFilm);
+  $('#filmScrub').addEventListener('click', (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    filmPct = clamp(((e.clientX - rect.left) / rect.width) * 100, 0, 100);
+    filmFill.style.width = filmPct + '%';
+    filmTime.textContent = fmtTime(filmPct);
+  });
+
+  /* ---------------- Testimonials ---------------- */
+  const TESTIMONIALS = [
+    {
+      quote: "We didn't go on a trip. We were handed a chapter of a life we'd half-forgotten we wanted. Every guide knew our names. Every meal had a reason. We came home different — quietly, but clearly.",
+      name: 'Elena Marchetti',
+      journey: 'Patagonia Expedition · March 2025',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
+      bg: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2400&q=80'
+    },
+    {
+      quote: "Eleven days, three islands, one boat, and a kind of silence I'd been chasing for a decade. Terranova doesn't sell itineraries — they listen for the trip that's already inside you and then politely point at it.",
+      name: 'Daniel Okafor',
+      journey: 'Raja Ampat Sail · October 2025',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+      bg: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=2400&q=80'
+    },
+    {
+      quote: "Our anniversary was supposed to be a long weekend in Florence. It became a quiet farm outside Lucca, an olive harvest, and a dinner cooked by a woman who taught us how to fold pasta with our thumbs. I cried, twice.",
+      name: 'Hannah & Mark Lin',
+      journey: 'Tuscan Slow Days · September 2025',
+      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80',
+      bg: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2400&q=80'
+    }
+  ];
+  let tIdx = 0;
+  function setTestimonial(i) {
+    tIdx = (i + TESTIMONIALS.length) % TESTIMONIALS.length;
+    const t = TESTIMONIALS[tIdx];
+    const card = $('#testimonialCard');
+    card.style.transition = 'opacity 0.35s ease';
+    card.style.opacity = '0';
+    setTimeout(() => {
+      $('#testimonialQuote').textContent = t.quote;
+      $('#testimonialName').textContent = t.name;
+      $('#testimonialJourney').textContent = t.journey;
+      $('#testimonialAvatar').style.backgroundImage = `url('${t.avatar}')`;
+      $('#testimonialBg').style.backgroundImage = `url('${t.bg}')`;
+      $('#tCurrent').textContent = String(tIdx + 1).padStart(2, '0');
+      card.style.opacity = '1';
+    }, 350);
+  }
+  $('#tPrev').addEventListener('click', () => setTestimonial(tIdx - 1));
+  $('#tNext').addEventListener('click', () => setTestimonial(tIdx + 1));
+
+  /* ---------------- Initial paint ---------------- */
+  onScroll();
+})();
+
+</script>
+</body>
+</html>
